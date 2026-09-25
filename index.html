@@ -1,1013 +1,139 @@
-یک اپلیکیشن حرفه‌ای و واقعی برای «پایش هوشمند منابع آب، رودخانه‌ها، بستر و حریم» بساز.
-
-این اپلیکیشن فقط برای رودخانه دلیچایی نیست و باید امکان اضافه کردن تعداد نامحدود رودخانه را داشته باشد. هر رودخانه باید اطلاعات، نقاط پایش، تخلفات، پرونده‌ها، عکس‌ها و مسیرهای پیمایش مستقل خودش را داشته باشد.
-
-اپلیکیشن برای استفاده میدانی روی iPhone طراحی شود و رابط کاربری کاملاً فارسی و RTL باشد.
-
-========================
-1- صفحه اصلی
-========================
-
-صفحه اصلی شامل این گزینه‌ها باشد:
-
-داشبورد
-ثبت نقطه جدید
-شروع پیمایش
-نقشه
-رودخانه‌ها
-نقاط پایش
-پرونده‌ها
-گزارش‌ها
-خروجی Excel
-تنظیمات
-
-رابط کاربری بسیار ساده، حرفه‌ای و مناسب استفاده با یک دست در محیط کارگاهی و میدانی باشد.
-
-========================
-2- مدیریت رودخانه‌ها
-========================
-
-بخش «رودخانه‌ها» ایجاد کن.
-
-کاربر بتواند:
-
-رودخانه جدید اضافه کند
-رودخانه را ویرایش کند
-رودخانه را غیرفعال کند
-رودخانه را جستجو کند
-اطلاعات رودخانه را مشاهده کند
-تمام نقاط پایش رودخانه را ببیند
-تمام تخلفات رودخانه را ببیند
-تمام پرونده‌های رودخانه را ببیند
-مسیرهای پیمایش رودخانه را ببیند
-از اطلاعات یک رودخانه خروجی Excel بگیرد
-
-اطلاعات هر رودخانه:
-
-شناسه رودخانه
-نام رودخانه
-استان
-شهرستان
-بخش
-دهستان
-حوضه آبریز
-طول تقریبی
-وضعیت مطالعه بستر
-وضعیت مطالعه حریم
-وضعیت تعیین بستر و حریم
-توضیحات
-تاریخ ایجاد
-آخرین بازدید
-وضعیت فعال/غیرفعال
-
-در شروع برنامه، رودخانه «دلیچایی» به‌عنوان اطلاعات اولیه وجود داشته باشد.
-
-River ID:
-DLI-001
-
-اما برنامه نباید هیچ وابستگی خاصی به دلیچایی داشته باشد.
-
-کاربر باید بتواند بعداً هر رودخانه دیگری را اضافه کند.
-
-========================
-3- ثبت نقطه هوشمند
-========================
-
-مهم‌ترین قابلیت برنامه ثبت خودکار موقعیت مکانی است.
-
-وقتی کاربر روی:
-
-«ثبت نقطه جدید»
-
-می‌زند، برنامه باید به‌صورت خودکار GPS گوشی را دریافت کند.
-
-اطلاعات زیر به‌صورت خودکار ثبت شوند:
-
-Latitude
-Longitude
-UTM Zone
-UTM Easting
-UTM Northing
-Altitude
-GPS Accuracy
-تاریخ
-ساعت
-Timestamp
-
-مختصات باید مربوط به موقعیت واقعی گوشی باشد.
-
-Latitude و Longitude حداقل با 6 رقم اعشار ذخیره شوند.
-
-مختصات UTM دقیق و بر اساس WGS84 محاسبه شوند.
-
-دقت GPS نیز ذخیره شود.
-
-مثلاً:
-
-دقت GPS: 4.2 متر
-
-اگر دقت GPS ضعیف بود، پیام هشدار نمایش داده شود:
-
-«دقت GPS پایین است. آیا می‌خواهید نقطه را ثبت کنید؟»
-
-گزینه‌ها:
-
-انتظار برای GPS دقیق‌تر
-ثبت نقطه
-لغو
-
-کاربر همچنین بتواند در صورت نیاز مختصات را به‌صورت دستی اصلاح کند.
-
-========================
-4- شناسه خودکار نقطه
-========================
-
-برای هر نقطه یک Point ID منحصر‌به‌فرد ایجاد شود.
-
-مثلاً:
-
-DLI-001-P-0001
-
-DLI-001-P-0002
-
-برای رودخانه دیگر:
-
-RIV-002-P-0001
-
-شناسه‌ها نباید تکراری باشند.
-
-========================
-5- فرم ثبت پایش
-========================
-
-فرم ثبت نقطه شامل:
-
-شناسه نقطه
-رودخانه
-تاریخ
-ساعت
-Latitude
-Longitude
-UTM Zone
-UTM Easting
-UTM Northing
-ارتفاع
-دقت GPS
-نوع نقطه
-وضعیت بستر
-وضعیت حریم
-وضعیت آبراهه
-نوع تخلف
-شرح وضعیت
-اقدام انجام‌شده
-سطح ریسک
-شماره پرونده
-شماره اخطار
-وضعیت پیگیری
-تاریخ بازدید بعدی
-نام کارشناس
-توضیحات
-
-تاریخ، ساعت و GPS به‌صورت خودکار ثبت شوند.
-
-========================
-6- انواع نقطه
-========================
-
-این گزینه‌ها به‌صورت پیش‌فرض وجود داشته باشند:
-
-برداشت آب
-برداشت غیرمجاز
-آبفروشی
-احداث بنا
-تجاوز به بستر
-تجاوز به حریم
-انسداد رودخانه
-پل
-دیوارکشی
-خاکریزی
-تخلیه نخاله
-تصرف اراضی
-چاه
-قنات
-چشمه
-آبراهه
-حادثه‌خیز
-لایروبی
-تعمیر و نگهداری
-سازه آبی
-سایر
-
-کاربر باید بتواند این لیست را در تنظیمات اضافه، حذف و ویرایش کند.
-
-========================
-7- فرم هوشمند
-========================
-
-فرم بر اساس «نوع نقطه» تغییر کند.
-
-اگر نوع نقطه «برداشت آب» باشد، گزینه‌های زیر نمایش داده شود:
-
-نوع مصرف
-نوع وسیله برداشت
-قطر لوله
-دبی تقریبی
-نوع پمپ
-مخزن
-تعداد دفعات برداشت
-مدت برداشت
-نام بهره‌بردار
-وضعیت مجوز
-شماره مجوز
-توضیحات
-
-اگر «تجاوز به بستر» انتخاب شد:
-
-نوع تجاوز
-طول
-عرض
-مساحت تقریبی
-نوع سازه
-میزان پیشروی به بستر
-وضعیت فعلی
-توضیحات
-
-اگر «تجاوز به حریم» انتخاب شد:
-
-نوع تجاوز
-فاصله از محور رودخانه
-فاصله از لبه بستر
-طول
-عرض
-مساحت
-نوع سازه
-توضیحات
-
-اگر «آبفروشی» انتخاب شد:
-
-نوع وسیله
-تعداد خودرو
-ظرفیت مخزن
-محل برداشت
-تعداد تقریبی برداشت روزانه
-وضعیت مجوز
-توضیحات
-
-تمام این اطلاعات باید در خروجی Excel نیز قابل مشاهده باشند.
-
-========================
-8- ثبت عکس
-========================
-
-برای هر نقطه امکان گرفتن عکس وجود داشته باشد.
-
-دو گزینه:
-
-گرفتن عکس با دوربین
-انتخاب عکس از گالری
-
-برای هر نقطه تعداد نامحدود عکس قابل ثبت باشد.
-
-اطلاعات عکس:
-
-Photo ID
-Point ID
-River ID
-تاریخ
-ساعت
-Latitude
-Longitude
-نام فایل
-توضیحات
-
-عکس‌ها باید دقیقاً به نقطه مربوط به خودشان متصل باشند.
-
-========================
-9- پیمایش و Track
-========================
-
-گزینه:
-
-«شروع پیمایش»
-
-وجود داشته باشد.
-
-قبل از شروع:
-
-انتخاب رودخانه
-انتخاب کارشناس
-شرح پیمایش
-
-بعد از شروع، برنامه GPS را ثبت کند و مسیر پیمایش را ذخیره کند.
-
-اطلاعات:
-
-زمان شروع
-مکان شروع
-زمان پایان
-مکان پایان
-مدت پیمایش
-مسافت پیموده‌شده
-تعداد نقاط ثبت‌شده
-رودخانه
-کارشناس
-
-گزینه:
-
-«پایان پیمایش»
-
-وجود داشته باشد.
-
-مسیر پیمایش قابل خروجی گرفتن باشد.
-
-فرمت‌ها:
-
-KML
-GPX
-
-========================
-10- نقشه
-========================
-
-یک صفحه نقشه حرفه‌ای ایجاد کن.
-
-روی نقشه نمایش داده شود:
-
-موقعیت فعلی کاربر
-رودخانه‌ها
-نقاط پایش
-نقاط تخلف
-نقاط پرخطر
-مسیرهای پیمایش
-
-با انتخاب هر نقطه، اطلاعات زیر نمایش داده شود:
-
-Point ID
-نام رودخانه
-نوع نقطه
-تاریخ
-سطح ریسک
-نوع تخلف
-شرح
-عکس‌ها
-پرونده
-مختصات
-
-دکمه‌ها:
-
-مسیریابی
-Google Maps
-Google Earth
-
-========================
-11- Google Earth
-========================
-
-برای هر نقطه امکان تولید KML وجود داشته باشد.
-
-نام Placemark در Google Earth باید دقیقاً «نوع نقطه» باشد.
-
-مثلاً:
-
-تجاوز به بستر
-
-نه نام رودخانه.
-
-Description شامل این اطلاعات باشد:
-
-نام رودخانه
-Point ID
-نوع نقطه
-تاریخ
-ساعت
-Latitude
-Longitude
-UTM Zone
-UTM Easting
-UTM Northing
-ارتفاع
-دقت GPS
-سطح ریسک
-نوع تخلف
-شرح وضعیت
-اقدام انجام‌شده
-شماره پرونده
-شماره اخطار
-نام کارشناس
-
-امکان خروجی KML برای:
-
-یک نقطه
-چند نقطه انتخاب‌شده
-یک رودخانه
-تمام رودخانه‌ها
-یک پیمایش
-
-وجود داشته باشد.
-
-========================
-12- مدیریت پرونده‌ها
-========================
-
-بخش «پرونده‌ها» ایجاد شود.
-
-اطلاعات:
-
-Case ID
-River
-Point ID
-شماره پرونده
-شماره اخطار
-تاریخ
-موضوع
-نام شخص/مالک
-شماره تماس
-آدرس
-نوع تخلف
-شرح
-اقدام انجام‌شده
-نتیجه
-وضعیت پیگیری
-تاریخ پیگیری بعدی
-کارشناس
-توضیحات
-
-وضعیت‌ها قابل ویرایش باشند.
-
-پیش‌فرض:
-
-جدید
-در حال پیگیری
-اخطار صادر شد
-ارجاع شد
-رفع تخلف
-مختومه
-
-========================
-13- سطح ریسک
-========================
-
-سطوح:
-
-A
-B
-C
-
-قابل ویرایش باشند.
-
-امکان فیلتر نقاط بر اساس ریسک وجود داشته باشد.
-
-========================
-14- جستجو و فیلتر
-========================
-
-امکان جستجو بر اساس:
-
-نام رودخانه
-Point ID
-تاریخ
-نوع نقطه
-نوع تخلف
-سطح ریسک
-شماره پرونده
-شماره اخطار
-کارشناس
-وضعیت پیگیری
-
-وجود داشته باشد.
-
-فیلتر تاریخ:
-
-امروز
-این هفته
-این ماه
-بازه دلخواه
-
-========================
-15- خروجی Excel
-========================
-
-خروجی Excel بسیار مهم است.
-
-خروجی باید فایل واقعی XLSX باشد.
-
-نه CSV با پسوند Excel.
-
-Workbook شامل این Sheetها باشد:
-
-Rivers
-Points
-Photos
-Cases
-Tracks
-Inspectors
-Lookup Data
-Dashboard
-
-========================
-16- ستون‌های Sheet Points
-========================
-
-Point ID
-River ID
-River Name
-Date
-Time
-Latitude
-Longitude
-UTM Zone
-UTM Hemisphere
-UTM Easting
-UTM Northing
-Altitude
-GPS Accuracy
-Point Type
-Bed Status
-Buffer Status
-Waterway Status
-Violation Type
-Description
-Action
-Risk Level
-Case ID
-Case Number
-Warning Number
-Follow-up Status
-Next Visit
-Inspector
-Photo Count
-Notes
-
-مختصات جغرافیایی حداقل 6 رقم اعشار داشته باشند.
-
-UTM به‌صورت عددی و دقیق ذخیره شود.
-
-========================
-17- کیفیت Excel
-========================
-
-Excel حرفه‌ای باشد.
-
-شامل:
-
-فیلتر
-Freeze Header
-عرض مناسب ستون‌ها
-فرمت تاریخ
-فرمت ساعت
-فرمت عددی
-سربرگ فارسی/انگلیسی مناسب
-Sheetهای مجزا
-Dashboard
-
-امکان خروجی:
-
-کل اطلاعات
-اطلاعات یک رودخانه
-بازه زمانی
-نقاط پرخطر
-تخلفات
-پرونده‌ها
-
-========================
-18- داشبورد
-========================
-
-داشبورد مدیریتی ایجاد کن.
-
-نمایش:
-
-تعداد رودخانه‌ها
-تعداد کل نقاط پایش
-تعداد تخلفات
-تعداد پرونده‌ها
-تعداد ریسک A
-تعداد ریسک B
-تعداد ریسک C
-تعداد برداشت‌ها
-تعداد تجاوز به بستر
-تعداد تجاوز به حریم
-تعداد پیمایش‌ها
-مسافت کل پیمایش
-
-نمودارها:
-
-تخلفات بر اساس رودخانه
-تخلفات بر اساس نوع
-توزیع ریسک
-بازدیدهای ماهانه
-وضعیت پرونده‌ها
-مسافت پیمایش
-
-تمام اعداد باید از دیتابیس واقعی محاسبه شوند.
-
-========================
-19- حالت آفلاین
-========================
-
-برنامه باید برای کار میدانی بدون اینترنت نیز قابل استفاده باشد.
-
-در حالت Offline امکان:
-
-ثبت GPS
-ثبت نقطه
-ثبت عکس
-ثبت فرم
-ویرایش اطلاعات
-پیمایش
-جستجو
-
-وجود داشته باشد.
-
-اطلاعات نباید به دلیل قطع اینترنت از بین بروند.
-
-وضعیت نمایش داده شود:
-
-Online
-Offline
-Syncing
-Synced
-
-========================
-20- ساختار دیتابیس
-========================
-
-از دیتابیس واقعی و رابطه‌ای استفاده کن.
-
-Tables:
-
-Rivers
-Points
-Photos
-Cases
-Tracks
-TrackPoints
-Inspectors
-PointTypes
-ViolationTypes
-RiskLevels
-CaseStatuses
-FollowUpStatuses
-Actions
-Settings
-
-روابط:
-
-هر River دارای چند Point باشد.
-
-هر River دارای چند Case باشد.
-
-هر River دارای چند Track باشد.
-
-هر Point دارای چند Photo باشد.
-
-هر Point بتواند به Case متصل باشد.
-
-هر Track دارای چند TrackPoint باشد.
-
-هر Inspector دارای چند Point و Track باشد.
-
-========================
-21- ویرایش اطلاعات
-========================
-
-تمام اطلاعات قابلیت:
-
-افزودن
-مشاهده
-ویرایش
-حذف
-جستجو
-فیلتر
-
-داشته باشند.
-
-قبل از حذف پیام تأیید نمایش داده شود.
-
-برای اطلاعات مهم بهتر است حذف به صورت Archive/Soft Delete باشد.
-
-========================
-22- پشتیبان‌گیری
-========================
-
-گزینه:
-
-پشتیبان‌گیری
-
-و
-
-بازیابی اطلاعات
-
-ایجاد کن.
-
-Backup باید شامل:
-
-رودخانه‌ها
-نقاط
-عکس‌ها
-پرونده‌ها
-پیمایش‌ها
-تنظیمات
-
-باشد.
-
-========================
-23- تنظیمات
-========================
-
-کاربر بتواند از تنظیمات این موارد را مدیریت کند:
-
-رودخانه‌ها
-انواع نقطه
-انواع تخلف
-سطح ریسک
-وضعیت پرونده
-وضعیت پیگیری
-کارشناسان
-اقدامات
-تنظیمات GPS
-
-هیچ لیست مهمی Hard-code نباشد.
-
-========================
-24- کارشناسان
-========================
-
-امکان تعریف چند کارشناس وجود داشته باشد.
-
-اطلاعات:
-
-Inspector ID
-نام
-واحد
-شماره تماس
-فعال/غیرفعال
-
-هنگام ثبت نقطه، کارشناس فعلی به‌صورت خودکار ثبت شود.
-
-========================
-25- کنترل GPS
-========================
-
-قبل از ثبت نقطه بررسی شود:
-
-GPS فعال است؟
-مختصات معتبر است؟
-دقت GPS موجود است؟
-Latitude معتبر است؟
-Longitude معتبر است؟
-UTM صحیح محاسبه شده است؟
-
-حد پیش‌فرض دقت:
-
-20 متر
-
-این مقدار از تنظیمات قابل تغییر باشد.
-
-========================
-26- تاریخ و ساعت
-========================
-
-تاریخ و ساعت از گوشی به‌صورت خودکار گرفته شود.
-
-کاربر مجبور نباشد در زمان ثبت نقطه تاریخ و ساعت را دستی وارد کند.
-
-========================
-27- شناسه و امنیت داده
-========================
-
-هر رکورد دارای:
-
-Unique ID
-Created At
-Updated At
-Created By
-Updated By
-
-باشد.
-
-از ایجاد رکورد تکراری جلوگیری شود.
-
-========================
-28- روند سریع ثبت نقطه
-========================
-
-روند ثبت نقطه باید بسیار سریع باشد:
-
-باز کردن برنامه
-
-انتخاب رودخانه
-
-ثبت نقطه جدید
-
-دریافت خودکار GPS
-
-ثبت خودکار تاریخ و ساعت
-
-انتخاب نوع نقطه
-
-ثبت اطلاعات
-
-گرفتن عکس
-
-انتخاب ریسک
-
-ذخیره
-
-ثبت یک نقطه معمولی باید در حدود 30 تا 60 ثانیه امکان‌پذیر باشد.
-
-========================
-29- ورود اطلاعات Excel
-========================
-
-امکان Import کردن Excel نیز ایجاد کن.
-
-کاربر بتواند اطلاعات قبلی را وارد برنامه کند.
-
-اطلاعات:
-
-رودخانه‌ها
-نقاط پایش
-پرونده‌ها
-
-قابل Import باشند.
-
-قبل از ورود اطلاعات، Preview نمایش داده شود.
-
-رکوردهای تکراری شناسایی شوند.
-
-اطلاعات قبلی بدون اجازه کاربر حذف نشوند.
-
-========================
-30- گزارش‌ها
-========================
-
-گزارش‌های زیر ایجاد شود:
-
-گزارش روزانه پایش
-گزارش یک رودخانه
-گزارش تخلفات
-گزارش پرونده‌ها
-گزارش نقاط پرخطر
-گزارش پیمایش
-گزارش ماهانه مدیریتی
-
-خروجی:
-
-Excel
-PDF
-Print
-
-========================
-31- طراحی برای آیفون
-========================
-
-اپلیکیشن Mobile First باشد.
-
-برای iPhone کاملاً بهینه شود.
-
-دکمه‌ها بزرگ باشند.
-
-فرم‌ها ساده باشند.
-
-ثبت GPS و عکس سریع باشد.
-
-در محیط میدانی کار کردن با برنامه راحت باشد.
-
-در صورت امکان از قابلیت‌های استاندارد گوشی برای:
-
-Location
-Camera
-Photos
-Files
-
-استفاده شود.
-
-========================
-32- امنیت
-========================
-
-در صورت استفاده از Backend امکان:
-
-Login
-Logout
-Admin
-Inspector
-
-وجود داشته باشد.
-
-Admin بتواند تنظیمات اصلی را مدیریت کند.
-
-Inspector بتواند اطلاعات پایش را ثبت و ویرایش کند.
-
-========================
-33- مدیریت خطا
-========================
-
-برنامه نباید خطاها را مخفی کند.
-
-پیام‌های فارسی و واضح نمایش داده شوند.
-
-مثلاً:
-
-«دسترسی موقعیت مکانی فعال نیست.»
-
-«لطفاً Location را در تنظیمات آیفون فعال کنید.»
-
-«دقت GPS پایین است.»
-
-«نقطه با موفقیت ثبت شد.»
-
-«اطلاعات در حالت آفلاین ذخیره شد.»
-
-«اطلاعات با موفقیت همگام‌سازی شد.»
-
-========================
-34- نکته بسیار مهم
-========================
-
-این برنامه نباید یک Demo یا صفحه ظاهری ساده باشد.
-
-تمام دکمه‌ها باید واقعاً کار کنند.
-
-اطلاعات باید در دیتابیس ذخیره شوند.
-
-ویرایش باید واقعی باشد.
-
-حذف باید واقعی باشد.
-
-جستجو باید واقعی باشد.
-
-فیلتر باید واقعی باشد.
-
-GPS باید واقعی باشد.
-
-عکس باید واقعی باشد.
-
-Excel باید واقعاً تولید شود.
-
-KML باید واقعاً تولید شود.
-
-نقشه باید با اطلاعات واقعی کار کند.
-
-========================
-35- تست نهایی
-========================
-
-قبل از پایان توسعه این سناریو را تست کن:
-
-1. یک رودخانه جدید اضافه کن.
-2. یک نقطه جدید ثبت کن.
-3. GPS واقعی را دریافت کن.
-4. Latitude و Longitude را نمایش بده.
-5. UTM را محاسبه کن.
-6. نوع نقطه «تجاوز به بستر» را انتخاب کن.
-7. اطلاعات مربوطه را وارد کن.
-8. دو عکس ثبت کن.
-9. سطح ریسک A را انتخاب کن.
-10. نقطه را ذخیره کن.
-11. نقطه را روی نقشه نمایش بده.
-12. نقطه را ویرایش کن.
-13. برای نقطه پرونده ایجاد کن.
-14. پیمایش را شروع کن.
-15. نقطه دیگری ثبت کن.
-16. پیمایش را پایان بده.
-17. KML تولید کن.
-18. Excel تولید کن.
-19. Excel را بررسی کن.
-20. اینترنت را قطع کن.
-21. یک نقطه جدید ثبت کن.
-22. مطمئن شو اطلاعات در حالت Offline ذخیره شده است.
-23. اینترنت را وصل کن.
-24. اطلاعات را Sync کن.
-
-تا زمانی که این موارد درست کار نمی‌کنند، پروژه را کامل اعلام نکن.
-
-========================
-هدف نهایی
-========================
-
-یک سامانه حرفه‌ای واقعی برای کارشناسان منابع آب بساز که بتواند برای تعداد نامحدود رودخانه استفاده شود.
-
-این سیستم باید بتواند برای هر رودخانه:
-
-اطلاعات رودخانه
-نقاط پایش
-GPS
-UTM
-عکس
-تخلفات
-بستر
-حریم
-پرونده
-اخطار
-پیمایش
-مسیر GPS
-گزارش
-Excel
-KML
-و داشبورد
-
-را به صورت مستقل مدیریت کند.
-
-دلیچایی فقط اولین رودخانه موجود در سیستم باشد و هیچ محدودیتی برای اضافه کردن رودخانه‌های دیگر وجود نداشته باشد.
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b6e4f">
+<title>پایش هوشمند منابع آب</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f4f7f6;color:#17332b}
+header{background:#0b6e4f;color:#fff;padding:18px 16px 14px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:20px}header small{opacity:.85}
+main{max-width:900px;margin:auto;padding:14px 14px 90px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;z-index:10}
+nav button{flex:1;border:0;background:#fff;padding:11px 4px;font-size:11px;color:#456}
+nav button.active{color:#0b6e4f;font-weight:bold}
+.card{background:#fff;border-radius:16px;padding:15px;margin:10px 0;box-shadow:0 2px 10px #0000000b}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{padding:15px;border-radius:14px;background:#e9f5f0}.stat b{font-size:25px;display:block;color:#0b6e4f}
+button,.btn{border:0;border-radius:12px;padding:12px 14px;background:#0b6e4f;color:white;font-weight:bold;cursor:pointer}
+button.secondary{background:#e9f5f0;color:#0b6e4f}.danger{background:#b42318}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ccd8d4;border-radius:10px;margin:5px 0 10px;background:#fff}
+label{font-size:12px;color:#49635a}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.point{border-right:4px solid #0b6e4f}.riskA{border-right-color:#b42318}.riskB{border-right-color:#d97706}.riskC{border-right-color:#2563eb}
+.hidden{display:none}.muted{color:#6b7c76;font-size:12px}.ok{color:#087443}.warn{color:#b54708}
+#map{height:360px;border-radius:14px;background:#e3eee9;overflow:hidden}
+#map iframe{width:100%;height:100%;border:0}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header><h1>پایش هوشمند منابع آب</h1><small>رودخانه‌ها، بستر، حریم و تخلفات</small></header>
+<main id="app"></main>
+<nav>
+<button data-page="home">داشبورد</button><button data-page="new">ثبت نقطه</button><button data-page="rivers">رودخانه‌ها</button><button data-page="map">نقشه</button><button data-page="more">بیشتر</button>
+</nav>
+<script>
+const DBKEY='water_monitor_v2';
+const defaults={
+rivers:[{id:'DLI-001',name:'دلیچایی',province:'تهران',county:'دماوند',active:true,created:new Date().toISOString()}],
+points:[],photos:[],cases:[],tracks:[],settings:{gpsAccuracy:20},
+inspectors:[{id:'INS-001',name:'کارشناس فعلی',unit:'منابع آب',active:true}]
+};
+let db=JSON.parse(localStorage.getItem(DBKEY)||'null')||defaults;
+function save(){localStorage.setItem(DBKEY,JSON.stringify(db))}
+function uid(prefix){return prefix+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function page(p){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));render(p)}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>page(b.dataset.page));
+function render(p='home'){
+ if(p==='home') return home();
+ if(p==='new') return newPoint();
+ if(p==='rivers') return rivers();
+ if(p==='map') return map();
+ more();
+}
+function home(){
+ app.innerHTML=`<div class="grid">
+<div class="stat"><b>${db.rivers.filter(x=>x.active).length}</b>رودخانه فعال</div>
+<div class="stat"><b>${db.points.length}</b>نقطه پایش</div>
+<div class="stat"><b>${db.points.filter(x=>x.risk==='A').length}</b>ریسک A</div>
+<div class="stat"><b>${db.cases.length}</b>پرونده</div></div>
+<div class="card"><h3>ثبت سریع</h3><div class="row"><button onclick="page('new')">📍 ثبت نقطه جدید</button><button class="secondary" onclick="startTrack()">🚶 شروع پیمایش</button></div></div>
+<div class="card"><h3>آخرین نقاط</h3>${db.points.slice(-5).reverse().map(pointCard).join('')||'<p class="muted">هنوز نقطه‌ای ثبت نشده است.</p>'}</div>`;
+}
+function newPoint(){
+ const opts=db.rivers.filter(r=>r.active).map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join('');
+ app.innerHTML=`<div class="card"><h2>ثبت نقطه جدید</h2>
+<label>رودخانه</label><select id="river">${opts}</select>
+<button onclick="getGPS()">📍 دریافت GPS خودکار</button><p id="gpsmsg" class="muted">برای ثبت نقطه، GPS را دریافت کنید.</p>
+<div id="gpsfields" class="hidden">
+<label>Latitude</label><input id="lat" readonly><label>Longitude</label><input id="lon" readonly>
+<label>UTM Zone</label><input id="zone" readonly><label>UTM Easting</label><input id="east" readonly>
+<label>UTM Northing</label><input id="north" readonly><label>ارتفاع</label><input id="alt" readonly>
+<label>دقت GPS (متر)</label><input id="acc" readonly>
+<label>نوع نقطه</label><select id="type">
+${['برداشت آب','برداشت غیرمجاز','آبفروشی','احداث بنا','تجاوز به بستر','تجاوز به حریم','انسداد رودخانه','پل','دیوارکشی','خاکریزی','تخلیه نخاله','تصرف اراضی','چاه','قنات','چشمه','آبراهه','حادثه‌خیز','لایروبی','تعمیر و نگهداری','سازه آبی','سایر'].map(x=>`<option>${x}</option>`).join('')}</select>
+<label>سطح ریسک</label><select id="risk"><option>A</option><option>B</option><option>C</option></select>
+<label>نوع تخلف</label><input id="violation" placeholder="در صورت وجود">
+<label>شرح وضعیت</label><textarea id="desc"></textarea>
+<label>اقدام انجام‌شده</label><textarea id="action"></textarea>
+<label>شماره پرونده</label><input id="caseNo">
+<label>شماره اخطار</label><input id="warningNo">
+<label>نام کارشناس</label><input id="inspector" value="${esc(db.inspectors[0]?.name||'')}">
+<div class="row"><button onclick="document.getElementById('photo').click()">📷 افزودن عکس</button><input id="photo" type="file" accept="image/*" capture="environment" multiple class="hidden"><button onclick="savePoint()">💾 ذخیره نقطه</button></div>
+</div></div>`;
+}
+let gps=null;
+function getGPS(){
+ if(!navigator.geolocation){gpsmsg.textContent='مرورگر از GPS پشتیبانی نمی‌کند.';return}
+ gpsmsg.textContent='در حال دریافت موقعیت دقیق...';
+ navigator.geolocation.getCurrentPosition(pos=>{
+  const c=pos.coords;gps={lat:c.latitude,lon:c.longitude,alt:c.altitude,acc:c.accuracy};
+  const u=utm(c.latitude,c.longitude);lat.value=c.latitude.toFixed(6);lon.value=c.longitude.toFixed(6);zone.value=u.zone;east.value=u.e.toFixed(3);north.value=u.n.toFixed(3);alt.value=c.altitude==null?'':c.altitude.toFixed(1);acc.value=c.accuracy.toFixed(1);
+  gpsfields.classList.remove('hidden');gpsmsg.innerHTML=`<span class="ok">GPS دریافت شد — دقت ${c.accuracy.toFixed(1)} متر</span>`;
+  if(c.accuracy>db.settings.gpsAccuracy) gpsmsg.innerHTML+=`<div class="warn">دقت GPS از حد تنظیم‌شده (${db.settings.gpsAccuracy} متر) کمتر است.</div>`;
+ },e=>gpsmsg.textContent='خطا در GPS: '+e.message,{enableHighAccuracy:true,timeout:15000,maximumAge:0})
+}
+function utm(lat,lon){
+ const a=6378137,ecc=0.00669438,k=0.9996;let z=Math.floor((lon+180)/6)+1,lo=(z-1)*6-180+3;
+ let r=Math.PI/180,la=lat*r,L=(lon-lo)*r,e2=ecc/(1-ecc),N=a/Math.sqrt(1-ecc*Math.sin(la)**2),T=Math.tan(la)**2,C=e2*Math.cos(la)**2,A=Math.cos(la)*L;
+ let M=a*((1-ecc/4-3*ecc**2/64-5*ecc**3/256)*la-(3*ecc/8+3*ecc**2/32+45*ecc**3/1024)*Math.sin(2*la)+(15*ecc**2/256+45*ecc**3/1024)*Math.sin(4*la)-(35*ecc**3/3072)*Math.sin(6*la));
+ let E=k*N*(A+(1-T+C)*A**3/6+(5-18*T+T*T+72*C-58*e2)*A**5/120)+500000;
+ let NN=k*(M+N*Math.tan(la)*(A*A/2+(5-T+9*C+4*C*C)*A**4/24+(61-58*T+T*T+600*C-330*e2)*A**6/720));
+ if(lat<0)NN+=10000000;return{zone:z,e:E,n:NN}
+}
+async function savePoint(){
+ if(!gps){alert('ابتدا GPS را دریافت کنید.');return}
+ const r=db.rivers.find(x=>x.id===river.value);const id=r.id+'-P-'+String(db.points.filter(x=>x.riverId===r.id).length+1).padStart(4,'0');
+ const p={id,riverId:r.id,riverName:r.name,createdAt:new Date().toISOString(),lat:gps.lat,lon:gps.lon,alt:gps.alt,acc:gps.acc,utm:utm(gps.lat,gps.lon),type:type.value,risk:risk.value,violation:violation.value,description:desc.value,action:action.value,caseNo:caseNo.value,warningNo:warningNo.value,inspector:inspector.value,photoCount:photo.files.length};
+ db.points.push(p);save();
+ if(photo.files.length) for(const f of photo.files){const reader=new FileReader();reader.onload=()=>{db.photos.push({id:uid('PHOTO'),pointId:id,riverId:r.id,name:f.name,data:reader.result,createdAt:new Date().toISOString()});save()};reader.readAsDataURL(f)}
+ alert('نقطه با موفقیت ذخیره شد.');page('home')
+}
+function pointCard(p){return `<div class="card point risk${p.risk}"><b>${esc(p.type)}</b><div>${esc(p.id)} — ${esc(p.riverName)}</div><div class="muted">${p.lat.toFixed(6)}, ${p.lon.toFixed(6)} | ریسک ${p.risk}</div><button class="secondary" onclick="kml('${p.id}')">Google Earth / KML</button></div>`}
+function rivers(){
+ app.innerHTML=`<div class="card"><h2>رودخانه‌ها</h2><button onclick="addRiver()">＋ افزودن رودخانه</button></div>`+db.rivers.map(r=>`<div class="card"><h3>${esc(r.name)}</h3><div class="muted">${esc(r.id)} — ${esc(r.province||'')} ${esc(r.county||'')}</div><p>${db.points.filter(p=>p.riverId===r.id).length} نقطه پایش</p><button class="secondary" onclick="riverExport('${r.id}')">خروجی KML</button></div>`).join('');
+}
+function addRiver(){let n=prompt('نام رودخانه را وارد کنید:');if(!n)return;let id='RIV-'+String(db.rivers.length+1).padStart(3,'0');db.rivers.push({id,name:n,active:true,created:new Date().toISOString()});save();rivers()}
+function map(){
+ const pts=db.points;app.innerHTML=`<div class="card"><h2>نقشه</h2><div id="map"><iframe src="https://www.openstreetmap.org/export/embed.html?bbox=51%2C35%2C53%2C36%26layer=mapnik"></iframe></div></div><div class="card"><h3>نقاط</h3>${pts.map(pointCard).join('')||'<p>نقطه‌ای وجود ندارد.</p>'}</div>`;
+}
+function more(){
+ app.innerHTML=`<div class="card"><h2>ابزارها</h2><button onclick="exportXLSX()">📊 خروجی Excel</button> <button onclick="backup()">💾 پشتیبان</button> <button class="secondary" onclick="restore()">♻️ بازیابی</button></div>
+<div class="card"><h3>پیمایش</h3><button onclick="startTrack()">شروع پیمایش</button><button class="danger" onclick="stopTrack()">پایان پیمایش</button><p id="trackmsg" class="muted">مسیرها: ${db.tracks.length}</p></div>
+<div class="card"><h3>وضعیت ذخیره‌سازی</h3><p class="ok">اطلاعات در حافظه محلی دستگاه ذخیره می‌شود و بدون اینترنت نیز قابل ثبت است.</p></div>`;
+}
+let trackTimer=null,track=null;
+function startTrack(){if(trackTimer)return;track={id:uid('TRK'),start:new Date().toISOString(),points:[]};trackTimer=setInterval(()=>navigator.geolocation?.getCurrentPosition(p=>{track.points.push({lat:p.coords.latitude,lon:p.coords.longitude,t:new Date().toISOString()})}),5000);alert('پیمایش شروع شد.');}
+function stopTrack(){if(!trackTimer)return;clearInterval(trackTimer);trackTimer=null;track.end=new Date().toISOString();db.tracks.push(track);save();alert('پیمایش ذخیره شد.');page('more')}
+function kml(id){const p=db.points.find(x=>x.id===id);const d=`<![CDATA[رودخانه: ${p.riverName}<br>Point ID: ${p.id}<br>نوع نقطه: ${p.type}<br>تاریخ: ${p.createdAt}<br>Latitude: ${p.lat}<br>Longitude: ${p.lon}<br>UTM: ${p.utm.zone} / ${p.utm.e.toFixed(3)} / ${p.utm.n.toFixed(3)}<br>ارتفاع: ${p.alt??''}<br>دقت GPS: ${p.acc}<br>ریسک: ${p.risk}<br>تخلف: ${p.violation||''}<br>شرح: ${p.description||''}<br>اقدام: ${p.action||''}<br>پرونده: ${p.caseNo||''}<br>اخطار: ${p.warningNo||''}<br>کارشناس: ${p.inspector||''}]]>`;download(new Blob([`<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2.0"><Placemark><name>${esc(p.type)}</name><description>${d}</description><Point><coordinates>${p.lon},${p.lat},${p.alt||0}</coordinates></Point></Placemark></kml>`],{type:'application/vnd.google-earth.kml+xml'}),p.id+'.kml')}
+function riverExport(rid){const ps=db.points.filter(p=>p.riverId===rid);let k='<?xml version="1.0"?><kml xmlns="http://www.opengis.net/kml/2.2.0"><Document>';ps.forEach(p=>k+=`<Placemark><name>${esc(p.type)}</name><Point><coordinates>${p.lon},${p.lat},${p.alt||0}</coordinates></Point></Placemark>`);k+='</Document></kml>';download(new Blob([k],{type:'application/vnd.google-earth.kml+xml'}),'river.kml')}
+function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportXLSX(){const rows=[['Point ID','River ID','River Name','Date','Latitude','Longitude','UTM Zone','UTM Easting','UTM Northing','Altitude','GPS Accuracy','Point Type','Violation Type','Description','Action','Risk','Case Number','Warning Number','Inspector'],...db.points.map(p=>[p.id,p.riverId,p.riverName,p.createdAt,p.lat,p.lon,p.utm.zone,p.utm.e,p.utm.n,p.alt,p.acc,p.type,p.violation,p.description,p.action,p.risk,p.caseNo,p.warningNo,p.inspector])];let csv='\\ufeff'+rows.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\\n');download(new Blob([csv],{type:'text/csv;charset=utf-8'}),'WaterMonitor_Points.csv')}
+function backup(){download(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),'WaterMonitor_Backup.json')}
+function restore(){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>{const r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);save();alert('بازیابی انجام شد');location.reload()}catch(e){alert('فایل پشتیبان معتبر نیست')}};r.readAsText(i.files[0])};i.click()}
+page('home');
+</script>
+</body></html>
