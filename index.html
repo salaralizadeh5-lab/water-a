@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="پایش آب">
+<title>پایش هوشمند منابع آب</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.a.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+--primary:#0b6bcb;--primary-dark:#0856a5;--danger:#e53935;--warn:#fb8c00;
+--ok:#43a047;--bg:#f2f5f9;--card:#fff;--text:#1a2233;--muted:#6b7688;--border:#dfe5ee;
+--radius:14px;--shadow:0 2px 12px rgba(10,30,60,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,sans-serif;
+background:var(--bg);color:var(--text);direction:rtl;font-size:15px;line-height:1.6;
+overscroll-behavior-y:contain;-webkit-user-select:none;user-select:none}
+body{padding-bottom:env(safe-area-inset-bottom)}
+input,textarea,select{font-family:inherit;font-size:16px}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.hidden{display:none!important}
+
+/* Header */
+header{position:sticky;top:0;z-index:500;background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+color:#fff;padding:14px 16px calc(14px + env(safe-area-inset-top)) 16px;
+padding-top:calc(14px + env(safe-area-inset-top));box-shadow:0 2px 10px rgba(0,0,0,.15)}
+header h1{margin:0;font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px}
+.header-status{font-size:11px;opacity:.9;display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#7fdc8a;margin-left:4px}
+.status-dot.off{background:#ff8a80}
+.back-btn{background:rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:8px;font-size:13px;margin-left:auto}
+
+/* Layout */
+.container{padding:14px;max-width:900px;margin:0 auto}
+.screen{display:none}
+.screen.active{display:block}
+
+/* Cards & buttons */
+.card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.btn{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;background:var(--card);
+box-shadow:var(--shadow);font-size:15px;font-weight:500;width:100%;text-align:right;color:var(--text);
+transition:transform .1s;margin-bottom:10px}
+.btn:active{transform:scale(.98)}
+.btn .ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:20px;
+background:linear-gradient(135deg,#e3f0ff,#c8e0ff);color:var(--primary);flex-shrink:0}
+.btn.primary{background:var(--primary);color:#fff;justify-content:center}
+.btn.primary .ico{background:rgba(255,255,255,.2);color:#fff}
+.btn.danger{background:var(--danger);color:#fff;justify-content:center}
+.btn.success{background:var(--ok);color:#fff;justify-content:center}
+.btn.small{padding:9px 14px;font-size:13px;width:auto;display:inline-flex;margin-bottom:0}
+.btn.outline{background:#fff;border:1.5px solid var(--primary);color:var(--primary)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.btn-row .btn{flex:1;min-width:110px;margin-bottom:0}
+
+/* Forms */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#39435a}
+.form-group label .req{color:var(--danger)}
+.form-group input,.form-group select,.form-group textarea{
+width:100%;padding:12px;border:1.5px solid var(--border);border-radius:10px;background:#fff;color:var(--text)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,107,203,.12)}
+.form-group textarea{min-height:80px;resize:vertical}
+.form-group small{color:var(--muted);font-size:12px;display:block;margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:400px){.grid3{grid-template-columns:1fr 1fr}}
+
+/* GPS box */
+.gps-box{background:linear-gradient(135deg,#e8f4ff,#d3e8ff);border:1.5px solid #a8cef5;border-radius:12px;
+padding:14px;margin-bottom:14px;text-align:center}
+.gps-box .coords{font-family:ui-monospace,Menlo,monospace;font-size:14px;color:#0d3d6b;direction:ltr;
+text-align:left;background:#fff;border-radius:8px;padding:10px;margin-top:8px}
+.gps-box .coords div{display:flex;justify-content:space-between;padding:2px 0}
+.gps-box .coords b{color:#0856a5}
+.gps-badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.gps-badge.good{background:#d4f5d8;color:#1b5e20}
+.gps-badge.mid{background:#fff3cd;color:#7a5c00}
+.gps-badge.bad{background:#ffd9d6;color:#a02020}
+
+/* List items */
+.item{background:var(--card);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow);
+border-right:4px solid var(--primary)}
+.item.risk-A{border-right-color:var(--danger)}
+.item.risk-B{border-right-color:var(--warn)}
+.item.risk-C{border-right-color:var(--ok)}
+.item h4{margin:0 0 4px 0;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.item .meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.item .meta span{display:inline-flex;align-items:center;gap:4px}
+.item .actions{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+
+/* Tags & badges */
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;background:#eef2f8;color:#39435a}
+.tag.red{background:#ffd9d6;color:#a02020}
+.tag.orange{background:#ffe5c2;color:#8a4a00}
+.tag.green{background:#d4f5d8;color:#1b5e20}
+.tag.blue{background:#d6e8ff;color:#0d3d6b}
+.tag.gray{background:#e8ecf2;color:#5a6478}
+
+/* Dashboard */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border-radius:12px;padding:14px;box-shadow:var(--shadow);text-align:center}
+.stat .num{font-size:26px;font-weight:700;color:var(--primary);line-height:1.2}
+.stat .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+.stat.red .num{color:var(--danger)}
+.stat.orange .num{color:var(--warn)}
+.stat.green .num{color:var(--ok)}
+
+/* Bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:150px;padding:10px 0;overflow-x:auto}
+.bar-chart .bar-wrap{flex:1;min-width:40px;display:flex;flex-direction:column;align-items:center;height:100%}
+.bar-chart .bar{width:100%;background:linear-gradient(180deg,var(--primary),#4a95e0);border-radius:6px 6px 0 0;
+min-height:4px;transition:height .4s;position:relative}
+.bar-chart .bar .val{position:absolute;top:-20px;left:0;right:0;text-align:center;font-size:11px;font-weight:700;color:var(--primary)}
+.bar-chart .bar-lbl{font-size:10px;color:var(--muted);margin-top:6px;text-align:center;max-width:60px;
+overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Map */
+#map{height:calc(100vh - 130px);width:100%;border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.map-filters{display:flex;gap:6px;overflow-x:auto;padding:8px 0;margin-bottom:8px}
+.map-filters .chip{padding:7px 14px;border-radius:20px;background:#fff;border:1.5px solid var(--border);
+font-size:13px;white-space:nowrap;flex-shrink:0;font-weight:500}
+.map-filters .chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,.55);z-index:1000;
+display:flex;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(4px)}
+.modal{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:92vh;
+overflow-y:auto;padding:20px 16px calc(20px + env(safe-area-inset-bottom)) 16px;
+animation:slideUp .25s ease-out;-webkit-overflow-scrolling:touch}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal h3{margin:0 0 14px 0;font-size:17px;display:flex;justify-content:space-between;align-items:center}
+.modal .close{background:#eef2f8;width:32px;height:32px;border-radius:50%;font-size:18px;color:#5a6478}
+
+/* Photo thumbnails */
+.photos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.photo-thumb{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#eef2f8}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb .del{position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;
+background:rgba(229,57,53,.9);color:#fff;font-size:14px;display:grid;place-items:center}
+
+/* Toast */
+#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+background:#1a2233;color:#fff;padding:12px 20px;border-radius:30px;font-size:14px;z-index:2000;
+box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;text-align:center}
+#toast.show{opacity:1}
+#toast.error{background:var(--danger)}
+#toast.success{background:var(--ok)}
+
+/* Search */
+.search-box{position:relative;margin-bottom:12px}
+.search-box input{padding-right:40px}
+.search-box .s-ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;background:#eef2f8;padding:4px;border-radius:12px;margin-bottom:12px;overflow-x:auto}
+.tabs button{flex:1;padding:9px;border-radius:9px;font-size:13px;font-weight:600;color:#5a6478;white-space:nowrap}
+.tabs button.active{background:#fff;color:var(--primary);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+
+/* Empty state */
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty .ico{font-size:48px;opacity:.4;margin-bottom:10px}
+
+/* Loading spinner */
+.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;
+border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Table for reports */
+.report-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.report-table th,.report-table td{padding:8px;border:1px solid var(--border);text-align:right}
+.report-table th{background:#eef2f8;font-weight:600}
+
+/* Progress steps */
+.progress-info{background:#eef6ff;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:#0d3d6b}
+
+/* Offline indicator */
+.offline-banner{background:var(--warn);color:#fff;padding:6px 14px;font-size:12px;text-align:center;font-weight:600}
+</style>
+</head>
+<body>
+
+<header>
+<h1> پایش هوشمند منابع آب</h1>
+<div class="header-status">
+<span><span class="status-dot" id="netDot"></span><span id="netTxt">آنلاین</span></span>
+<span id="inspectorTxt"> کارشناس: —</span>
+<span id="riverTxt"> رودخانه: —</span>
+<button class="back-btn" id="backBtn" style="display:none" onclick="goBack()">‹ بازگشت</button>
+</div>
+</header>
+
+<main>
+<!-- HOME -->
+<section id="scr-home" class="screen active">
+<div class="container">
+<div class="card" id="homeQuick">
+<div style="font-size:13px;color:var(--muted);margin-bottom:10px"> ثبت سریع نقطه</div>
+<button class="btn primary" onclick="startQuickPoint()">
+<span class="ico"></span><span>ثبت نقطه جدید با GPS</span>
+</button>
+</div>
+
+<button class="btn" onclick="show('scr-dashboard');renderDashboard()">
+<span class="ico"></span><span>داشبورد مدیریتی</span>
+</button>
+<button class="btn" onclick="startQuickPoint()">
+<span class="ico"></span><span>ثبت نقطه جدید</span>
+</button>
+<button class="btn" onclick="openTrackStart()">
+<span class="ico"></span><span>شروع پیمایش</span>
+</button>
+<button class="btn" onclick="show('scr-map');initMap()">
+<span class="ico"></span><span>نقشه</span>
+</button>
+<button class="btn" onclick="show('scr-rivers');renderRivers()">
+<span class="ico"></span><span>رودخانه‌ها</span>
+</button>
+<button class="btn" onclick="show('scr-points');renderPointsList()">
+<span class="ico"></span><span>نقاط پایش</span>
+</button>
+<button class="btn" onclick="show('scr-cases');renderCases()">
+<span class="ico"></span><span>پرونده‌ها</span>
+</button>
+<button class="btn" onclick="show('scr-reports')">
+<span class="ico"></span><span>گزارش‌ها</span>
+</button>
+<button class="btn" onclick="show('scr-export')">
+<span class="ico"></span><span>خروجی Excel</span>
+</button>
+<button class="btn" onclick="show('scr-settings');renderSettings()">
+<span class="ico"></span><span>تنظیمات</span>
+</button>
+</div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="scr-dashboard" class="screen">
+<div class="container">
+<div class="stat-grid" id="statGrid"></div>
+<div class="card">
+<h4 style="margin:0 0 10px 0">تخلفات بر اساس رودخانه</h4>
+<div class="bar-chart" id="chartRivers"></div>
+</div>
+<div class="card">
+<h4 style="margin:0 0 10px 0">تخلفات بر اساس نوع</h4>
+<div class="bar-chart" id="chartTypes"></div>
+</div>
+<div class="card">
+<h4 style="margin:0 0 10px 0">توزیع سطح ریسک</h4>
+<div class="bar-chart" id="chartRisk"></div>
+</div>
+<div class="card">
+<h4 style="margin:0 0 10px 0">وضعیت پرونده‌ها</h4>
+<div class="bar-chart" id="chartCases"></div>
+</div>
+</div>
+</section>
+
+<!-- RIVERS -->
+<section id="scr-rivers" class="screen">
+<div class="container">
+<div class="btn-row">
+<button class="btn outline" onclick="editRiver()"> رودخانه جدید</button>
+</div>
+<div class="search-box">
+<input id="riverSearch" placeholder="جستجوی رودخانه..." oninput="renderRivers()">
+<span class="s-ico"></span>
+</div>
+<div id="riversList"></div>
+</div>
+</section>
+
+<!-- POINTS LIST -->
+<section id="scr-points" class="screen">
+<div class="container">
+<div class="btn-row">
+<button class="btn outline" onclick="startQuickPoint()"> نقطه جدید</button>
+<button class="btn outline" onclick="togglePointFilter()"> فیلتر</button>
+</div>
+<div id="pointFilters" class="card hidden">
+<div class="grid2">
+<div class="form-group"><label>رودخانه</label><select id="fRiver"><option value="">همه</option></select></div>
+<div class="form-group"><label>سطح ریسک</label><select id="fRisk"><option value="">همه</option><option>A</option><option>B</option><option>C</option></select></div>
+<div class="form-group"><label>نوع نقطه</label><select id="fType"><option value="">همه</option></select></div>
+<div class="form-group"><label>از تاریخ</label><input type="date" id="fFrom"></div>
+<div class="form-group"><label>تا تاریخ</label><input type="date" id="fTo"></div>
+</div>
+<div class="btn-row">
+<button class="btn small" onclick="renderPointsList()">اعمال فیلتر</button>
+<button class="btn small outline" onclick="clearPointFilters()">پاک‌کردن</button>
+</div>
+</div>
+<div class="search-box">
+<input id="pointSearch" placeholder="جستجو در شرح، شناسه، شماره پرونده..." oninput="renderPointsList()">
+<span class="s-ico"></span>
+</div>
+<div id="pointsList"></div>
+</div>
+</section>
+
+<!-- POINT FORM -->
+<section id="scr-point-form" class="screen">
+<div class="container" id="pointFormContainer"></div>
+</section>
+
+<!-- MAP -->
+<section id="scr-map" class="screen">
+<div class="container" style="padding:8px 8px 14px">
+<div class="map-filters">
+<button class="chip active" data-layer="all" onclick="setMapFilter('all',this)">همه</button>
+<button class="chip" data-layer="river" onclick="setMapFilter('river',this)"> رودخانه‌ها</button>
+<button class="chip" data-layer="point" onclick="setMapFilter('point',this)"> نقاط</button>
+<button class="chip" data-layer="riskA" onclick="setMapFilter('riskA',this)"> پرخطر</button>
+<button class="chip" data-layer="track" onclick="setMapFilter('track',this)"> مسیرها</button>
+</div>
+<div id="map"></div>
+</div>
+</section>
+
+<!-- CASES -->
+<section id="scr-cases" class="screen">
+<div class="container">
+<div class="btn-row">
+<button class="btn outline" onclick="editCase()"> پرونده جدید</button>
+</div>
+<div class="search-box">
+<input id="caseSearch" placeholder="جستجوی پرونده..." oninput="renderCases()">
+<span class="s-ico"></span>
+</div>
+<div id="casesList"></div>
+</div>
+</section>
+
+<!-- CASE FORM -->
+<section id="scr-case-form" class="screen">
+<div class="container" id="caseFormContainer"></div>
+</section>
+
+<!-- REPORTS -->
+<section id="scr-reports" class="screen">
+<div class="container">
+<button class="btn" onclick="reportDaily()"><span class="ico"></span><span>گزارش روزانه پایش</span></button>
+<button class="btn" onclick="reportRiver()"><span class="ico"></span><span>گزارش یک رودخانه</span></button>
+<button class="btn" onclick="reportViolations()"><span class="ico"></span><span>گزارش تخلفات</span></button>
+<button class="btn" onclick="reportCases()"><span class="ico"></span><span>گزارش پرونده‌ها</span></button>
+<button class="btn" onclick="reportHighRisk()"><span class="ico"></span><span>گزارش نقاط پرخطر</span></button>
+<button class="btn" onclick="reportTracks()"><span class="ico"></span><span>گزارش پیمایش</span></button>
+<button class="btn" onclick="reportMonthly()"><span class="ico"></span><span>گزارش ماهانه مدیریتی</span></button>
+</div>
+</section>
+
+<!-- EXPORT -->
+<section id="scr-export" class="screen">
+<div class="container">
+<div class="card">
+<h4 style="margin-top:0"> خروجی Excel (XLSX)</h4>
+<p style="font-size:13px;color:var(--muted)">فایل اکسل واقعی شامل ۸ شیت: Rivers, Points, Photos, Cases, Tracks, TrackPoints, Inspectors, Dashboard</p>
+<button class="btn primary" onclick="exportExcel('all')"><span class="ico"></span><span>خروجی کل اطلاعات</span></button>
+<button class="btn outline" onclick="exportExcelByRiver()"><span class="ico"></span><span>خروجی یک رودخانه</span></button>
+<button class="btn outline" onclick="exportExcelHighRisk()"><span class="ico"></span><span>خروجی نقاط پرخطر</span></button>
+</div>
+<div class="card">
+<h4 style="margin-top:0"> خروجی KML برای Google Earth</h4>
+<button class="btn outline" onclick="exportKML('all')"><span class="ico"></span><span>همه نقاط</span></button>
+<button class="btn outline" onclick="exportKMLByRiver()"><span class="ico"></span><span>یک رودخانه</span></button>
+<button class="btn outline" onclick="exportKMLByTrack()"><span class="ico"></span><span>یک پیمایش</span></button>
+</div>
+<div class="card">
+<h4 style="margin-top:0"> خروجی GPX پیمایش</h4>
+<button class="btn outline" onclick="exportGPXByTrack()"><span class="ico"></span><span>خروجی GPX</span></button>
+</div>
+<div class="card">
+<h4 style="margin-top:0"> پشتیبان‌گیری</h4>
+<button class="btn outline" onclick="backupAll()"><span class="ico"></span><span>پشتیبان کامل (JSON)</span></button>
+<button class="btn outline" onclick="document.getElementById('restoreFile').click()"><span class="ico"></span><span>بازیابی از فایل</span></button>
+<input type="file" id="restoreFile" accept=".json" class="hidden" onchange="restoreBackup(event)">
+<button class="btn outline" onclick="document.getElementById('importFile').click()"><span class="ico"></span><span>Import از Excel</span></button>
+<input type="file" id="importFile" accept=".xlsx,.xls" class="hidden" onchange="importExcel(event)">
+</div>
+</div>
+</section>
+
+<!-- SETTINGS -->
+<section id="scr-settings" class="screen">
+<div class="container" id="settingsContainer"></div>
+</section>
+</main>
+
+<div id="toast"></div>
+<div id="modalRoot"></div>
+
+<script>
+/* ============================================================
+سامانه پایش هوشمند منابع آب — Core Application
+Storage: IndexedDB | GPS: Geolocation API | Map: Leaflet
+============================================================ */
+
+const DB_NAME = 'WaterMonitorDB';
+const DB_VERSION = 1;
+let db = null;
+
+/* ---------- IndexedDB Wrapper ---------- */
+const STORES = {
+rivers:{key:'id',auto:false},
+points:{key:'id',auto:false},
+photos:{key:'id',auto:false},
+cases:{key:'id',auto:false},
+tracks:{key:'id',auto:false},
+trackPoints:{key:'id',auto:false},
+inspectors:{key:'id',auto:false},
+lookups:{key:'key',auto:false}, // کلید‌های لیستی: pointTypes, violationTypes, ...
+settings:{key:'key',auto:false},
+counters:{key:'key',auto:false}
+};
+
+function openDB(){
+return new Promise((resolve,reject)=>{
+const r = indexedDB.open(DB_NAME, DB_VERSION);
+r.onupgradeneeded = e=>{
+const d = e.target.result;
+for(const name in STORES){
+if(!d.objectStoreNames.contains(name)){
+const cfg = STORES[name];
+const s = d.createObjectStore(name,{keyPath:cfg.key, autoIncrement:cfg.auto});
+if(name==='points'){ s.createIndex('riverId','riverId',{unique:false}); s.createIndex('date','date',{unique:false}); s.createIndex('risk','risk',{unique:false}); }
+if(name==='photos'){ s.createIndex('pointId','pointId',{unique:false}); s.createIndex('riverId','riverId',{unique:false}); }
+if(name==='cases'){ s.createIndex('riverId','riverId',{unique:false}); s.createIndex('pointId','pointId',{unique:false}); }
+if(name==='tracks'){ s.createIndex('riverId','riverId',{unique:false}); }
+if(name==='trackPoints'){ s.createIndex('trackId','trackId',{unique:false}); }
+}
+}
+};
+r.onsuccess = e=>{ db=e.target.result; resolve(); };
+r.onerror = e=>reject(e.target.error);
+});
+}
+
+function tx(store, mode='readonly'){
+return db.transaction(store, mode).objectStore(store);
+}
+function dbGet(store,key){
+return new Promise((res,rej)=>{ const r=tx(store).get(key); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
+}
+function dbAll(store){
+return new Promise((res,rej)=>{ const r=tx(store).getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); });
+}
+function dbPut(store,obj){
+return new Promise((res,rej)=>{ const r=tx(store,'readwrite').put(obj); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
+}
+function dbAdd(store,obj){
+return new Promise((res,rej)=>{ const r=tx(store,'readwrite').add(obj); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
+}
+function dbDelete(store,key){
+return new Promise((res,rej)=>{ const r=tx(store,'readwrite').delete(key); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
+}
+function dbClear(store){
+return new Promise((res,rej)=>{ const r=tx(store,'readwrite').clear(); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
+}
+function dbBulkPut(store,arr){
+return new Promise((res,rej)=>{
+const t = db.transaction(store,'readwrite');
+const s = t.objectStore(store);
+arr.forEach(o=>s.put(o));
+t.oncomplete=()=>res(); t.onerror=()=>rej(t.error);
+});
+}
+
+/* ---------- UTM Conversion (WGS84) ---------- */
+function latLonToUTM(lat, lon){
+const a = 6378137.0, f = 1/298.257223563;
+const e2 = 2*f - f*f;
+const k0 = 0.9996;
+const zone = Math.floor((lon + 180) / 6) + 1;
+const lonOrigin = (zone - 1) * 6 - 180 + 3;
+const latRad = lat * Math.PI/180;
+const lonRad = lon * Math.PI/180;
+const lonOriginRad = lonOrigin * Math.PI/180;
+const ep2 = e2 / (1 - e2);
+const N = a / Math.sqrt(1 - e2 * Math.sin(latRad)**2);
+const T = Math.tan(latRad)**2;
+const C = ep2 * Math.cos(latRad)**2;
+const A = Math.cos(latRad) * (lonRad - lonOriginRad);
+const M = a * ((1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256)*latRad
+- (3*e2/8 + 3*e2*e2/32 + 45*e2*e2*e2/1024)*Math.sin(2*latRad)
++ (15*e2*e2/256 + 45*e2*e2*e2/1024)*Math.sin(4*latRad)
+- (35*e2*e2*e2/3072)*Math.sin(6*latRad));
+const easting = k0 * N * (A + (1 - T + C)*A**3/6 + (5 - 18*T + T*T + 72*C - 58*ep2)*A**5/120) + 500000;
+let northing = k0 * (M + N*Math.tan(latRad)*(A*A/2 + (5 - T + 9*C + 4*C*C)*A**4/24
++ (61 - 58*T + T*T + 600*C - 330*ep2)*A**6/720));
+const hemi = lat < 0 ? 'S' : 'N';
+if(lat < 0) northing += 10000000;
+return {
+zone: zone + hemi,
+easting: Math.round(easting*100)/100,
+northing: Math.round(northing*100)/100,
+hemisphere: hemi,
+zoneNum: zone
+};
+}
+
+/* ---------- Utils ---------- */
+function uid(prefix=''){ return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function pad(n,len){ return String(n).padStart(len,'0'); }
+function faNum(n){ return String(n).replace(/[0-9]/g, d=>'۰۱۲۳۴۵۶۷۸۹'[d]); }
+function now(){
+const d = new Date();
+return {
+date: d.toISOString().slice(0,10),
+time: d.toTimeString().slice(0,5),
+iso: d.toISOString(),
+ts: d.getTime()
+};
+}
+function toast(msg, type=''){
+const t = document.getElementById('toast');
+t.textContent = msg; t.className = 'show ' + type;
+clearTimeout(t._tm);
+t._tm = setTimeout(()=>{ t.className=''; }, 2800);
+}
+function confirmBox(msg){
+return new Promise(res=>{
+openModal(`<h3>تأیید</h3><p>${msg}</p>
+<div class="btn-row"><button class="btn danger" id="cYes">بله</button>
+<button class="btn outline" id="cNo">لغو</button></div>`, m=>{
+m.querySelector('#cYes').onclick = ()=>{ closeModal(); res(true); };
+m.querySelector('#cNo').onclick = ()=>{ closeModal(); res(false); };
+});
+});
+}
+function promptBox(title, def=''){
+return new Promise(res=>{
+openModal(`<h3>${title}</h3>
+<div class="form-group"><input id="pVal" value="${def}"></div>
+<div class="btn-row"><button class="btn primary" id="pOk">تأیید</button>
+<button class="btn outline" id="pNo">لغو</button></div>`, m=>{
+m.querySelector('#pVal').focus();
+m.querySelector('#pOk').onclick = ()=>{ const v=m.querySelector('#pVal').value.trim(); closeModal(); res(v||null); };
+m.querySelector('#pNo').onclick = ()=>{ closeModal(); res(null); };
+});
+});
+}
+function openModal(html, cb){
+const root = document.getElementById('modalRoot');
+const wrap = document.createElement('div');
+wrap.className = 'modal-overlay';
+wrap.innerHTML = `<div class="modal">${html}</div>`;
+root.appendChild(wrap);
+wrap.onclick = e=>{ if(e.target===wrap) closeModal(); };
+if(cb) cb(wrap.querySelector('.modal'));
+}
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
+
+/* ---------- Navigation ---------- */
+let navStack = [];
+function show(id, push=true){
+if(push){
+const cur = document.querySelector('.screen.active');
+if(cur && cur.id !== id) navStack.push(cur.id);
+}
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+const el = document.getElementById(id);
+if(el) el.classList.add('active');
+const btn = document.getElementById('backBtn');
+btn.style.display = navStack.length ? 'inline-block' : 'none';
+window.scrollTo(0,0);
+}
+function goBack(){
+const prev = navStack.pop();
+if(prev) show(prev,false);
+const btn = document.getElementById('backBtn');
+btn.style.display = navStack.length ? 'inline-block' : 'none';
+}
+
+/* ---------- App State ---------- */
+const App = {
+riverId: null, // رودخانه فعال
+inspectorId: null, // کارشناس فعال
+rivers: [],
+inspectors: [],
+lookups: {}, // انواع نقطه، تخلف، ...
+settings: {},
+online: navigator.onLine,
+trackId: null,
+trackWatchId: null,
+quickPointType: null
+};
+
+/* ---------- Initial Seed ---------- */
+const DEFAULT_POINT_TYPES = ['برداشت آب','برداشت غیرمجاز','آب‌فروشی','احداث بنا','تجاوز به بستر','تجاوز به حریم','انسداد رودخانه','پل','دیوارکشی','خاکریزی','تخلیه نخاله','تصرف اراضی','چاه','قنات','چشمه','آبراهه','حادثه‌خیز','لایروبی','تعمیر و نگهداری','سازه آبی','سایر'];
+const DEFAULT_VIOLATION_TYPES = ['بدون تخلف','تجاوز به بستر','تجاوز به حریم','برداشت غیرمجاز آب','احداث بنا بدون مجوز','دیوارکشی','خاکریزی','تخلیه نخاله','انسداد مسیر','تصرف اراضی'];
+const DEFAULT_CASE_STATUSES = ['جدید','در حال پیگیری','اخطار صادر شد','ارجاع شد','رفع تخلف','مختومه'];
+const DEFAULT_FOLLOWUP_STATUSES = ['در انتظار بازدید','اخطار ارسال شد','ارجاع به مراجع قضایی','در حال رفع','رفع شده','مختومه'];
+const DEFAULT_RISK_LEVELS = ['A','B','C'];
+const DEFAULT_ACTIONS = ['ثبت گزارش','ارسال اخطار','ارجاع به مراجع','رفع تخلف','پیگیری مجدد','بدون اقدام'];
+const DEFAULT_BED_STATUSES = ['طبیعی','فرسایش جزئی','فرسایش شدید','رسوب‌گذاری','تصرف شده','تغییر مسیر'];
+const DEFAULT_BUFFER_STATUSES = ['طبیعی','تجاوز جزئی','تجاوز شدید','تغییر کاربری','سازه غیرمجاز'];
+const DEFAULT_WATERWAY_STATUSES = ['باز','نیمه‌باز','انسداد جزئی','انسداد کامل','خشک'];
+const DEFAULT_CONSUMPTION_TYPES = ['کشاورزی','صنعتی','شرب','دامی','خدماتی','سایر'];
+const DEFAULT_PUMP_TYPES = ['برقی','دیزلی','بنزینی','بدون پمپ'];
+const DEFAULT_LICENSES = ['دارد','ندارد','در حال بررسی','منقضی'];
+
+async function seedDefaults(){
+const existing = await dbGet('rivers','DLI-001');
+if(!existing){
+const r = {
+id:'DLI-001',
+name:'دلیچایی',
+province:'—', city:'—', district:'—', rural:'—',
+watershed:'—', length:'—',
+bedStudy:'انجام نشده', bufferStudy:'انجام نشده', delimitation:'انجام نشده',
+notes:'رودخانه پیش‌فرض سیستم',
+createdAt: new Date().toISOString(), lastVisit:null,
+active:true, createdBy:'system', updatedAt:new Date().toISOString()
+};
+await dbPut('rivers', r);
+}
+
+const insp = await dbAll('inspectors');
+if(!insp.length){
+await dbPut('inspectors', {
+id:'INS-001', name:'کارشناس پیش‌فرض', unit:'امور منابع آب',
+phone:'', active:true, createdAt:new Date().toISOString()
+});
+}
+
+const lookups = [
+['pointTypes', DEFAULT_POINT_TYPES],
+['violationTypes', DEFAULT_VIOLATION_TYPES],
+['caseStatuses', DEFAULT_CASE_STATUSES],
+['followupStatuses', DEFAULT_FOLLOWUP_STATUSES],
+['riskLevels', DEFAULT_RISK_LEVELS],
+['actions', DEFAULT_ACTIONS],
+['bedStatuses', DEFAULT_BED_STATUSES],
+['bufferStatuses', DEFAULT_BUFFER_STATUSES],
+['waterwayStatuses', DEFAULT_WATERWAY_STATUSES],
+['consumptionTypes', DEFAULT_CONSUMPTION_TYPES],
+['pumpTypes', DEFAULT_PUMP_TYPES],
+['licenses', DEFAULT_LICENSES]
+];
+for(const [key,items] of lookups){
+const ex = await dbGet('lookups', key);
+if(!ex) await dbPut('lookups', { key, items });
+}
+
+const settings = await dbGet('settings','gps');
+if(!settings){
+await dbPut('settings', { key:'gps', accuracyLimit: 20, highAccuracy:true, timeout:20000 });
+}
+}
+
+/* ---------- Load App State ---------- */
+async function loadApp(){
+App.rivers = (await dbAll('rivers')).filter(r=>r.active!==false);
+App.inspectors = (await dbAll('inspectors')).filter(i=>i.active!==false);
+const lookupsAll = await dbAll('lookups');
+App.lookups = {};
+lookupsAll.forEach(l=>App.lookups[l.key]=l.items);
+const s = await dbGet('settings','gps');
+App.settings.gps = s || { accuracyLimit:20, highAccuracy:true, timeout:20000 };
+
+const lastRiver = await dbGet('settings','lastRiver');
+const lastInsp = await dbGet('settings','lastInspector');
+App.riverId = (lastRiver && lastRiver.value) || (App.rivers[0] && App.rivers[0].id) || null;
+App.inspectorId = (lastInsp && lastInsp.value) || (App.inspectors[0] && App.inspectors[0].id) || null;
+
+const trk = await dbGet('settings','activeTrack');
+App.trackId = trk ? trk.value : null;
+
+updateHeader();
+}
+
+function updateHeader(){
+const netDot = document.getElementById('netDot');
+const netTxt = document.getElementById('netTxt');
+if(App.online){ netDot.className='status-dot'; netTxt.textContent='آنلاین'; }
+else{ netDot.className='status-dot off'; netTxt.textContent='آفلاین'; }
+
+const insp = App.inspectors.find(i=>i.id===App.inspectorId);
+document.getElementById('inspectorTxt').textContent = ' ' + (insp ? insp.name : '—');
+const riv = App.rivers.find(r=>r.id===App.riverId);
+document.getElementById('riverTxt').textContent = ' ' + (riv ? riv.name : '—');
+}
+
+window.addEventListener('online', ()=>{ App.online=true; updateHeader(); toast('اتصال برقرار شد','success'); });
+window.addEventListener('offline', ()=>{ App.online=false; updateHeader(); toast('حالت آفلاین — داده‌ها محلی ذخیره می‌شوند'); });
+
+/* ---------- ID Generators ---------- */
+async function nextPointId(riverId){
+const key = 'point_' + riverId;
+let c = await dbGet('counters', key);
+let n = (c ? c.value : 0) + 1;
+await dbPut('counters', { key, value: n });
+return `${riverId}-P-${pad(n,4)}`;
+}
+async function nextCaseId(){
+let c = await dbGet('counters','case');
+let n = (c ? c.value : 0) + 1;
+await dbPut('counters', { key:'case', value:n });
+return 'CASE-' + pad(n,4);
+}
+async function nextPhotoId(){
+let c = await dbGet('counters','photo');
+let n = (c ? c.value : 0) + 1;
+await dbPut('counters', { key:'photo', value:n });
+return 'PH-' + pad(n,5);
+}
+async function nextTrackId(){
+let c = await dbGet('counters','track');
+let n = (c ? c.value : 0) + 1;
+await dbPut('counters', { key:'track', value:n });
+return 'TRK-' + pad(n,4);
+}
+
+/* ============================================================
+GPS
+============================================================ */
+function getGPS(highAccuracy=true){
+return new Promise((resolve, reject)=>{
+if(!navigator.geolocation) return reject('مرورگر از GPS پشتیبانی نمی‌کند');
+navigator.geolocation.getCurrentPosition(
+p=>resolve({
+lat: +p.coords.latitude.toFixed(7),
+lon: +p.coords.longitude.toFixed(7),
+accuracy: +p.coords.accuracy.toFixed(1),
+altitude: p.coords.altitude ? +p.coords.altitude.toFixed(1) : null,
+ts: p.timestamp
+}),
+e=>{
+let msg = 'خطا در دریافت موقعیت مکانی';
+if(e.code===1) msg = 'دسترسی موقعیت مکانی فعال نیست. لطفاً Location را در تنظیمات آیفون فعال کنید.';
+else if(e.code===2) msg = 'موقعیت مکانی در دسترس نیست.';
+else if(e.code===3) msg = 'زمان دریافت GPS به پایان رسید.';
+reject(msg);
+},
+{ enableHighAccuracy: highAccuracy, timeout: App.settings.gps.timeout || 20000, maximumAge: 0 }
+);
+});
+}
+
+function formatGPSBox(g){
+if(!g) return '<div class="coords">در حال دریافت GPS...</div>';
+const utm = latLonToUTM(g.lat, g.lon);
+const badge = g.accuracy <= 10 ? 'good' : g.accuracy <= 20 ? 'mid' : 'bad';
+const badgeTxt = g.accuracy <= 10 ? 'دقت خوب' : g.accuracy <= 20 ? 'دقت متوسط' : 'دقت پایین';
+return `
+<div class="gps-box">
+<span class="gps-badge ${badge}">${badgeTxt}: ${g.accuracy} متر</span>
+<div class="coords">
+<div><span>Latitude</span><b>${g.lat.toFixed(7)}</b></div>
+<div><span>Longitude</span><b>${g.lon.toFixed(7)}</b></div>
+<div><span>UTM Zone</span><b>${utm.zone}</b></div>
+<div><span>Easting</span><b>${utm.easting}</b></div>
+<div><span>Northing</span><b>${utm.northing}</b></div>
+${g.altitude!==null?`<div><span>Altitude</span><b>${g.altitude} m</b></div>`:''}
+</div>
+</div>`;
+}
+
+/* ============================================================
+DASHBOARD
+============================================================ */
+async function renderDashboard(){
+const [rivers, points, cases, tracks, trackPoints] = await Promise.all([
+dbAll('rivers'), dbAll('points'), dbAll('cases'), dbAll('tracks'), dbAll('trackPoints')
+]);
+const activePoints = points.filter(p=>!p.deleted);
+const activeCases = cases.filter(c=>!c.deleted);
+const violations = activePoints.filter(p=>p.violationType && p.violationType!=='بدون تخلف');
+const riskA = activePoints.filter(p=>p.risk==='A').length;
+const riskB = activePoints.filter(p=>p.risk==='B').length;
+const riskC = activePoints.filter(p=>p.risk==='C').length;
+const waterTaking = activePoints.filter(p=>p.pointType==='برداشت آب').length;
+const bedViol = activePoints.filter(p=>p.pointType==='تجاوز به بستر').length;
+const bufferViol = activePoints.filter(p=>p.pointType==='تجاوز به حریم').length;
+
+// مسافت کل
+let totalDist = 0;
+const tpsByTrack = {};
+trackPoints.forEach(tp=>{ (tpsByTrack[tp.trackId]=tpsByTrack[tp.trackId]||[]).push(tp); });
+for(const tid in tpsByTrack){
+const arr = tpsByTrack[tid].sort((a,b)=>a.ts-b.ts);
+for(let i=1;i<arr.length;i++){
+totalDist += haversine(arr[i-1].lat,arr[i-1].lon,arr[i].lat,arr[i].lon);
+}
+}
+
+const grid = document.getElementById('statGrid');
+grid.innerHTML = `
+<div class="stat"><div class="num">${faNum(rivers.filter(r=>r.active!==false).length)}</div><div class="lbl"> رودخانه‌ها</div></div>
+<div class="stat"><div class="num">${faNum(activePoints.length)}</div><div class="lbl"> نقاط پایش</div></div>
+<div class="stat red"><div class="num">${faNum(violations.length)}</div><div class="lbl"> تخلفات</div></div>
+<div class="stat"><div class="num">${faNum(activeCases.length)}</div><div class="lbl"> پرونده‌ها</div></div>
+<div class="stat red"><div class="num">${faNum(riskA)}</div><div class="lbl"> ریسک A</div></div>
+<div class="stat orange"><div class="num">${faNum(riskB)}</div><div class="lbl"> ریسک B</div></div>
+<div class="stat green"><div class="num">${faNum(riskC)}</div><div class="lbl"> ریسک C</div></div>
+<div class="stat"><div class="num">${faNum(waterTaking)}</div><div class="lbl"> برداشت آب</div></div>
+<div class="stat"><div class="num">${faNum(bedViol)}</div><div class="lbl"> تجاوز بستر</div></div>
+<div class="stat"><div class="num">${faNum(bufferViol)}</div><div class="lbl"> تجاوز حریم</div></div>
+<div class="stat"><div class="num">${faNum(tracks.length)}</div><div class="lbl"> پیمایش‌ها</div></div>
+<div class="stat"><div class="num">${faNum(totalDist.toFixed(1))}</div><div class="lbl"> مسافت (km)</div></div>
+`;
+
+// نمودار تخلفات بر اساس رودخانه
+const byRiver = {};
+violations.forEach(p=>{ byRiver[p.riverName||p.riverId] = (byRiver[p.riverName||p.riverId]||0)+1; });
+drawBars('chartRivers', Object.entries(byRiver).map(([k,v])=>({label:k,value:v})));
+
+// نمودار تخلفات بر اساس نوع
+const byType = {};
+violations.forEach(p=>{ byType[p.pointType] = (byType[p.pointType]||0)+1; });
+drawBars('chartTypes', Object.entries(byType).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>({label:k,value:v})));
+
+// توزیع ریسک
+drawBars('chartRisk', [
+{label:'A',value:riskA},{label:'B',value:riskB},{label:'C',value:riskC}
+]);
+
+// وضعیت پرونده‌ها
+const byCase = {};
+activeCases.forEach(c=>{ byCase[c.status||'—'] = (byCase[c.status||'—']||0)+1; });
+drawBars('chartCases', Object.entries(byCase).map(([k,v])=>({label:k,value:v})));
+}
+
+function drawBars(elId, data){
+const el = document.getElementById(elId);
+if(!data.length){ el.innerHTML = '<div class="empty">داده‌ای برای نمایش نیست</div>'; return; }
+const max = Math.max(...data.map(d=>d.value),1);
+el.innerHTML = data.map(d=>`
+<div class="bar-wrap">
+<div class="bar" style="height:${Math.max(4,(d.value/max)*100)}%">
+<span class="val">${faNum(d.value)}</span>
+</div>
+<div class="bar-lbl">${d.label}</div>
+</div>
+`).join('');
+}
+
+function haversine(la1,lo1,la2,lo2){
+const R=6371;
+const dLa=(la2-la1)*Math.PI/180, dLo=(lo2-lo1)*Math.PI/180;
+const a=Math.sin(dLa/2)**2 + Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLo/2)**2;
+return 2*R*Math.asin(Math.sqrt(a));
+}
+
+/* ============================================================
+RIVERS
+============================================================ */
+async function renderRivers(){
+const list = document.getElementById('riversList');
+const q = (document.getElementById('riverSearch').value||'').trim();
+let rivers = await dbAll('rivers');
+if(q) rivers = rivers.filter(r=>(r.name+r.province+r.city+r.watershed).includes(q));
+
+if(!rivers.length){
+list.innerHTML = '<div class="empty"><div class="ico"></div>رودخانه‌ای یافت نشد</div>';
+return;
+}
+const points = await dbAll('points');
+list.innerHTML = rivers.map(r=>{
+const cnt = points.filter(p=>p.riverId===r.id && !p.deleted).length;
+return `
+<div class="item" style="${r.active===false?'opacity:.55':''}">
+<h4>
+<span>${r.name} <span class="tag blue">${r.id}</span></span>
+${r.active===false?'<span class="tag gray">غیرفعال</span>':''}
+</h4>
+<div class="meta">
+<span> ${r.province||'—'} / ${r.city||'—'}</span>
+<span> ${faNum(cnt)} نقطه</span>
+${r.watershed?`<span> ${r.watershed}</span>`:''}
+</div>
+<div class="actions">
+<button class="btn small outline" onclick="selectRiver('${r.id}')">فعال‌سازی</button>
+<button class="btn small outline" onclick="editRiver('${r.id}')">ویرایش</button>
+<button class="btn small outline" onclick="viewRiverDetail('${r.id}')">جزئیات</button>
+<button class="btn small outline" onclick="toggleRiverActive('${r.id}')">${r.active===false?'فعال':'غیرفعال'}</button>
+</div>
+</div>`;
+}).join('');
+}
+
+async function selectRiver(id){
+App.riverId = id;
+await dbPut('settings', { key:'lastRiver', value:id });
+updateHeader();
+toast('رودخانه فعال تغییر کرد','success');
+}
+
+async function toggleRiverActive(id){
+const r = await dbGet('rivers', id);
+r.active = r.active===false ? true : false;
+r.updatedAt = new Date().toISOString();
+await dbPut('rivers', r);
+renderRivers();
+}
+
+async function editRiver(id){
+const r = id ? await dbGet('rivers',id) : {
+id:'', name:'', province:'', city:'', district:'', rural:'',
+watershed:'', length:'', bedStudy:'انجام نشده', bufferStudy:'انجام نشده',
+delimitation:'انجام نشده', notes:'', active:true
+};
+openModal(`
+<h3>${id?'ویرایش':'رودخانه جدید'}<button class="close" onclick="closeModal()">✕</button></h3>
+<div class="form-group"><label>شناسه رودخانه <span class="req">*</span></label>
+<input id="rv_id" value="${r.id}" ${id?'disabled':''} placeholder="مثال: KAR-002"></div>
+<div class="form-group"><label>نام رودخانه <span class="req">*</span></label>
+<input id="rv_name" value="${r.name}"></div>
+<div class="grid2">
+<div class="form-group"><label>استان</label><input id="rv_prov" value="${r.province||''}"></div>
+<div class="form-group"><label>شهرستان</label><input id="rv_city" value="${r.city||''}"></div>
+<div class="form-group"><label>بخش</label><input id="rv_dist" value="${r.district||''}"></div>
+<div class="form-group"><label>دهستان</label><input id="rv_rural" value="${r.rural||''}"></div>
+</div>
+<div class="form-group"><label>حوضه آبریز</label><input id="rv_watershed" value="${r.watershed||''}"></div>
+<div class="form-group"><label>طول تقریبی (km)</label><input id="rv_len" value="${r.length||''}"></div>
+<div class="form-group"><label>وضعیت مطالعه بستر</label>
+<select id="rv_bed">${['انجام نشده','در حال انجام','انجام شده'].map(o=>`<option ${r.bedStudy===o?'selected':''}>${o}</option>`).join('')}</select></div>
+<div class="form-group"><label>وضعیت مطالعه حریم</label>
+<select id="rv_buffer">${['انجام نشده','در حال انجام','انجام شده'].map(o=>`<option ${r.bufferStudy===o?'selected':''}>${o}</option>`).join('')}</select></div>
+<div class="form-group"><label>وضعیت تعیین بستر و حریم</label>
+<select id="rv_delim">${['انجام نشده','در حال انجام','انجام شده','ابلاغ شده'].map(o=>`<option ${r.delimitation===o?'selected':''}>${o}</option>`).join('')}</select></div>
+<div class="form-group"><label>توضیحات</label><textarea id="rv_notes">${r.notes||''}</textarea></div>
+<div class="btn-row">
+<button class="btn primary" id="rvSave">ذخیره</button>
+${id?`<button class="btn danger" id="rvDel">حذف</button>`:''}
+</div>
+`, m=>{
+m.querySelector('#rvSave').onclick = async ()=>{
+const nid = m.querySelector('#rv_id').value.trim();
+const name = m.querySelector('#rv_name').value.trim();
+if(!nid || !name){ toast('شناسه و نام الزامی است','error'); return; }
+if(!id && await dbGet('rivers', nid)){ toast('این شناسه قبلاً وجود دارد','error'); return; }
+const obj = {
+id: nid, name,
+province: m.querySelector('#rv_prov').value.trim(),
+city: m.querySelector('#rv_city').value.trim(),
+district: m.querySelector('#rv_dist').value.trim(),
+rural: m.querySelector('#rv_rural').value.trim(),
+watershed: m.querySelector('#rv_watershed').value.trim(),
+length: m.querySelector('#rv_len').value.trim(),
+bedStudy: m.querySelector('#rv_bed').value,
+bufferStudy: m.querySelector('#rv_buffer').value,
+delimitation: m.querySelector('#rv_delim').value,
+notes: m.querySelector('#rv_notes').value.trim(),
+active: r.active!==false,
+createdAt: r.createdAt || new Date().toISOString(),
+updatedAt: new Date().toISOString(),
+createdBy: App.inspectorId || 'system'
+};
+await dbPut('rivers', obj);
+closeModal(); toast('رودخانه ذخیره شد','success');
+await loadApp(); renderRivers();
+};
+if(id) m.querySelector('#rvDel').onclick = async ()=>{
+if(await confirmBox('این رودخانه حذف شود؟ (Soft Delete)')){
+const rr = await dbGet('rivers',id); rr.active=false; rr.updatedAt=new Date().toISOString();
+await dbPut('rivers', rr);
+closeModal(); renderRivers();
+}
+};
+});
+}
+
+async function viewRiverDetail(id){
+const r = await dbGet('rivers', id);
+const points = (await dbAll('points')).filter(p=>p.riverId===id && !p.deleted);
+const cases = (await dbAll('cases')).filter(c=>c.riverId===id && !c.deleted);
+const tracks = (await dbAll('tracks')).filter(t=>t.riverId===id);
+openModal(`
+<h3>${r.name}<button class="close" onclick="closeModal()">✕</button></h3>
+<div style="font-size:13px;color:var(--muted);margin-bottom:10px">شناسه: ${r.id}</div>
+<div class="card" style="box-shadow:none;background:#f7faff">
+<div><b>استان:</b> ${r.province||'—'} &nbsp; <b>شهرستان:</b> ${r.city||'—'}</div>
+<div><b>حوضه:</b> ${r.watershed||'—'} &nbsp; <b>طول:</b> ${r.length||'—'} km</div>
+<div><b>مطالعه بستر:</b> ${r.bedStudy} &nbsp; <b>مطالعه حریم:</b> ${r.bufferStudy}</div>
+<div><b>تعیین بستر و حریم:</b> ${r.delimitation}</div>
+${r.notes?`<div style="margin-top:8px">${r.notes}</div>`:''}
+</div>
+<div class="stat-grid">
+<div class="stat"><div class="num">${faNum(points.length)}</div><div class="lbl"> نقاط</div></div>
+<div class="stat"><div class="num">${faNum(cases.length)}</div><div class="lbl"> پرونده</div></div>
+<div class="stat"><div class="num">${faNum(tracks.length)}</div><div class="lbl"> پیمایش</div></div>
+<div class="stat"><div class="num">${faNum(points.filter(p=>p.violationType&&p.violationType!=='بدون تخلف').length)}</div><div class="lbl"> تخلف</div></div>
+</div>
+<div class="btn-row">
+<button class="btn small" onclick="selectRiver('${id}');closeModal();show('scr-points');renderPointsList()">نمایش نقاط</button>
+<button class="btn small" onclick="exportRiverExcel('${id}');closeModal()">Excel این رودخانه</button>
+<button class="btn small" onclick="exportRiverKML('${id}');closeModal()">KML این رودخانه</button>
+</div>
+`);
+}
+
+/* ============================================================
+POINT — فرم ثبت هوشمند
+============================================================ */
+async function startQuickPoint(){
+if(!App.riverId){ toast('ابتدا یک رودخانه انتخاب کنید','error'); show('scr-rivers'); renderRivers(); return; }
+if(!App.inspectorId){ toast('ابتدا کارشناس انتخاب کنید','error'); show('scr-settings'); renderSettings(); return; }
+renderPointForm(null);
+show('scr-point-form');
+// شروع دریافت GPS
+try{
+toast('در حال دریافت GPS...');
+const g = await getGPS();
+window._currentGPS = g;
+const box = document.getElementById('gpsBox');
+if(box) box.innerHTML = formatGPSBox(g);
+const accLimit = App.settings.gps.accuracyLimit || 20;
+if(g.accuracy > accLimit) toast(`دقت GPS پایین است (${g.accuracy}m)`, 'error');
+else toast('GPS دریافت شد', 'success');
+}catch(e){
+toast(e,'error');
+const box = document.getElementById('gpsBox');
+if(box) box.innerHTML = `<div class="gps-box" style="background:#ffe0dd;border-color:#f5a8a2">
+<b> ${e}</b><br><button class="btn small outline" style="margin-top:8px" onclick="retryGPS()">تلاش مجدد</button>
+</div>`;
+}
+}
+
+async function retryGPS(){
+const box = document.getElementById('gpsBox');
+box.innerHTML = '<div class="gps-box">در حال دریافت GPS...</div>';
+try{
+const g = await getGPS(); window._currentGPS = g;
+box.innerHTML = formatGPSBox(g);
+toast('GPS دریافت شد','success');
+}catch(e){ toast(e,'error'); }
+}
+
+async function renderPointForm(existing){
+const container = document.getElementById('pointFormContainer');
+const p = existing || {};
+const river = await dbGet('rivers', p.riverId || App.riverId);
+const nowT = now();
+const types = App.lookups.pointTypes || [];
+const violations = App.lookups.violationTypes || [];
+const risks = App.lookups.riskLevels || ['A','B','C'];
+const caseStatuses = App.lookups.caseStatuses || [];
+const followups = App.lookups.followupStatuses || [];
+const bed = App.lookups.bedStatuses || [];
+const buf = App.lookups.bufferStatuses || [];
+const wway = App.lookups.waterwayStatuses || [];
+const actions = App.lookups.actions || [];
+
+const isEdit = !!existing;
+const pointId = isEdit ? p.id : '(پس از ذخیره تولید می‌شود)';
+
+container.innerHTML = `
+<div class="card">
+<h3 style="margin:0 0 6px 0;font-size:16px"> ${isEdit?'ویرایش':'ثبت'} نقطه پایش</h3>
+<div style="font-size:13px;color:var(--muted)">شناسه: ${pointId} — رودخانه: ${river?river.name:'—'}</div>
+</div>
+
+<div class="card">
+<div id="gpsBox">${window._currentGPS && !isEdit ? formatGPSBox(window._currentGPS) : (isEdit ? formatGPSBox({lat:p.lat,lon:p.lon,accuracy:p.gpsAccuracy,altitude:p.altitude}) : 'در حال دریافت GPS...')}</div>
+<div class="btn-row">
+<button class="btn small outline" onclick="retryGPS()"> بروزرسانی GPS</button>
+<button class="btn small outline" onclick="manualCoords()"> ورود دستی مختصات</button>
+</div>
+</div>
+
+<div class="card">
+<div class="form-group"><label>نوع نقطه <span class="req">*</span></label>
+<select id="pf_type" onchange="updateDynamicFields()">
+<option value="">— انتخاب کنید —</option>
+${types.map(t=>`<option ${p.pointType===t?'selected':''}>${t}</option>`).join('')}
+</select>
+</div>
+
+<div class="grid2">
+<div class="form-group"><label>وضعیت بستر</label>
+<select id="pf_bed"><option value="">—</option>${bed.map(o=>`<option ${p.bedStatus===o?'selected':''}>${o}</option>`).join('')}</select></div>
+<div class="form-group"><label>وضعیت حریم</label>
+<select id="pf_buffer"><option value="">—</option>${buf.map(o=>`<option ${p.bufferStatus===o?'selected':''}>${o}</option>`).join('')}</select></div>
+<div class="form-group"><label>وضعیت آبراهه</label>
+<select id="pf_waterway"><option value="">—</option>${wway.map(o=>`<option ${p.waterwayStatus===o?'selected':''}>${o}</option>`).join('')}</select></div>
+<div class="form-group"><label>سطح ریسک</label>
+<select id="pf_risk">${risks.map(o=>`<option ${p.risk===o?'selected':''}>${o}</option>`).join('')}</select></div>
+</div>
+
+<div class="form-group"><label>نوع تخلف</label>
+<select id="pf_violation">${violations.map(o=>`<option ${p.violationType===o?'selected':''}>${o}</option>`).join('')}</select></div>
+
+<div class="form-group"><label>شرح وضعیت</label><textarea id="pf_desc">${p.description||''}</textarea></div>
+
+<div class="form-group"><label>اقدام انجام‌شده</label>
+<select id="pf_action">${actions.map(o=>`<option ${p.action===o?'selected':''}>${o}</option>`).join('')}</select></div>
+
+<div class="grid2">
+<div class="form-group"><label>شماره پرونده</label><input id="pf_case" value="${p.caseNumber||''}"></div>
+<div class="form-group"><label>شماره اخطار</label><input id="pf_warn" value="${p.warningNumber||''}"></div>
+</div>
+<div class="form-group"><label>وضعیت پیگیری</label>
+<select id="pf_follow">${followups.map(o=>`<option ${p.followupStatus===o?'selected':''}>${o}</option>`).join('')}</select></div>
+<div class="form-group"><label>تاریخ بازدید بعدی</label><input type="date" id="pf_nextVisit" value="${p.nextVisit||''}"></div>
+<div class="form-group"><label>کارشناس</label>
+<select id="pf_inspector">${App.inspectors.map(i=>`<option value="${i.id}" ${p.inspectorId===i.id||(!p.inspectorId&&App.inspectorId===i.id)?'selected':''}>${i.name}</option>`).join('')}</select></div>
+<div class="form-group"><label>توضیحات</label><textarea id="pf_notes">${p.notes||''}</textarea></div>
+</div>
+
+<div class="card">
+<h4 style="margin:0 0 10px 0"> عکس‌ها <span id="photoCount" class="tag blue">${(existing?(await dbAll('photos')).filter(x=>x.pointId===p.id).length:0)}</span></h4>
+<div class="btn-row">
+<button class="btn small outline" onclick="document.getElementById('camInput').click()"> دوربین</button>
+<button class="btn small outline" onclick="document.getElementById('galInput').click()"> گالری</button>
+</div>
+<input type="file" id="camInput" accept="image/*" capture="environment" class="hidden" multiple onchange="handlePhotos(event)">
+<input type="file" id="galInput" accept="image/*" class="hidden" multiple onchange="handlePhotos(event)">
+<div id="photosGrid" class="photos-grid"></div>
+<div style="font-size:12px;color:var(--muted);margin-top:8px">عکس‌ها پس از ذخیره نقطه به آن متصل می‌شوند</div>
+</div>
